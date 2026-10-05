@@ -223,12 +223,3 @@ PUT /review/like/{id}
 | 探店笔记 | 就医评价 | Redis ZSet点赞、Feed流 |
 | 好友关注 | 医生收藏 | Redis Set交集 |
 | 用户签到 | 就诊打卡 | Bitmap统计 |
-
-## 作者
-
-- GitHub: [你的GitHub]
-- Email: [你的邮箱]
-
-## 许可证
-
-MIT License
