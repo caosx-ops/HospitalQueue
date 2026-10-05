@@ -1,0 +1,26 @@
+{
+  "started_at": "2026-10-04T11:17:21.148490+08:00",
+  "target": "http://127.0.0.1:8081/doctor/1",
+  "host": "PC-20260907VIOM",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "python": "3.13.15",
+  "requests_library": "2.34.2",
+  "warmup_requests": 100,
+  "measured_requests": 2000,
+  "concurrency": 20,
+  "elapsed_seconds": 2.255,
+  "throughput_requests_per_second": 887.11,
+  "latency_ms": {
+    "mean": 22.43,
+    "p50": 21.556,
+    "p95": 34.486,
+    "p99": 41.925,
+    "max": 52.589
+  },
+  "http_status_counts": {
+    "200": 2000
+  },
+  "error_count": 0,
+  "sample_errors": [],
+  "note": "Single-host demo probe; includes client and local network overhead and is not a production capacity claim."
+}

@@ -1,0 +1,521 @@
+{
+  "info": {
+    "name": "医院智能排队叫号系统 API",
+    "description": "Hospital Queue System API Testing Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8081",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. 用户认证",
+      "item": [
+        {
+          "name": "1.1 发送验证码",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/code?phone=13800138000",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "code"],
+              "query": [
+                {
+                  "key": "phone",
+                  "value": "13800138000"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.2 用户登录",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.success && jsonData.data) {",
+                  "    pm.collectionVariables.set('token', jsonData.data);",
+                  "    console.log('Token saved: ' + jsonData.data);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"phone\": \"13800138000\",\n    \"code\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "login"]
+            }
+          }
+        },
+        {
+          "name": "1.3 查询当前用户",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. 科室管理",
+      "item": [
+        {
+          "name": "2.1 查询科室列表",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/department/list",
+              "host": ["{{baseUrl}}"],
+              "path": ["department", "list"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. 医生管理",
+      "item": [
+        {
+          "name": "3.1 查询医生详情",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/doctor/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["doctor", "1"]
+            }
+          }
+        },
+        {
+          "name": "3.2 根据科室查询医生",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/doctor/of/department?departmentId=1&current=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["doctor", "of", "department"],
+              "query": [
+                {
+                  "key": "departmentId",
+                  "value": "1"
+                },
+                {
+                  "key": "current",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.3 根据科室查询医生（带地理位置）",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/doctor/of/department?departmentId=1&current=1&x=116.397128&y=39.916527",
+              "host": ["{{baseUrl}}"],
+              "path": ["doctor", "of", "department"],
+              "query": [
+                {
+                  "key": "departmentId",
+                  "value": "1"
+                },
+                {
+                  "key": "current",
+                  "value": "1"
+                },
+                {
+                  "key": "x",
+                  "value": "116.397128",
+                  "description": "经度（北京市中心）"
+                },
+                {
+                  "key": "y",
+                  "value": "39.916527",
+                  "description": "纬度（北京市中心）"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.4 查询医生候诊人数",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/doctor/1/waiting",
+              "host": ["{{baseUrl}}"],
+              "path": ["doctor", "1", "waiting"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. 排班管理",
+      "item": [
+        {
+          "name": "4.1 添加排班",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"doctorId\": 1,\n    \"title\": \"上午门诊\",\n    \"subTitle\": \"9:00-12:00\",\n    \"payValue\": 3000,\n    \"actualValue\": 5000,\n    \"type\": 1,\n    \"stock\": 50,\n    \"beginTime\": \"2024-10-04 00:00:00\",\n    \"endTime\": \"2024-10-31 23:59:59\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/schedule",
+              "host": ["{{baseUrl}}"],
+              "path": ["schedule"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. 挂号管理",
+      "item": [
+        {
+          "name": "5.1 抢专家号",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/appointment/grab/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["appointment", "grab", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. 评价管理",
+      "item": [
+        {
+          "name": "6.1 发布评价",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"doctorId\": 1,\n    \"title\": \"服务态度很好\",\n    \"content\": \"医生很专业，诊断准确，态度和蔼，非常满意！\",\n    \"images\": \"/imgs/review1.jpg,/imgs/review2.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/review",
+              "host": ["{{baseUrl}}"],
+              "path": ["review"]
+            }
+          }
+        },
+        {
+          "name": "6.2 点赞评价",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/review/like/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["review", "like", "1"]
+            }
+          }
+        },
+        {
+          "name": "6.3 查询热门评价",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/review/hot?current=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["review", "hot"],
+              "query": [
+                {
+                  "key": "current",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "6.4 查询我的评价",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/review/of/me?current=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["review", "of", "me"],
+              "query": [
+                {
+                  "key": "current",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "6.5 查询评价详情",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/review/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["review", "1"]
+            }
+          }
+        },
+        {
+          "name": "6.6 查询评价点赞用户",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/review/likes/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["review", "likes", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. 收藏管理",
+      "item": [
+        {
+          "name": "7.1 收藏医生",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/favorite/1/true",
+              "host": ["{{baseUrl}}"],
+              "path": ["favorite", "1", "true"]
+            }
+          }
+        },
+        {
+          "name": "7.2 取消收藏医生",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/favorite/1/false",
+              "host": ["{{baseUrl}}"],
+              "path": ["favorite", "1", "false"]
+            }
+          }
+        },
+        {
+          "name": "7.3 判断是否收藏",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/favorite/or/not/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["favorite", "or", "not", "1"]
+            }
+          }
+        },
+        {
+          "name": "7.4 查询共同收藏",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/favorite/common/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["favorite", "common", "2"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "2",
+                  "description": "另一个用户的ID",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. 用户签到",
+      "item": [
+        {
+          "name": "8.1 用户签到",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/sign",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "sign"]
+            }
+          }
+        },
+        {
+          "name": "8.2 查询签到记录",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/sign/count",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "sign", "count"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

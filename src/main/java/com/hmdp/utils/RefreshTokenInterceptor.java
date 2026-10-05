@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.hmdp.utils.RedisConstants.LOGIN_USER_KEY;
 import static com.hmdp.utils.RedisConstants.LOGIN_USER_TTL;
+import static com.hmdp.utils.RedisConstants.UV_KEY;
 
 public class RefreshTokenInterceptor implements HandlerInterceptor {
 
@@ -27,6 +28,7 @@ public class RefreshTokenInterceptor implements HandlerInterceptor {
         // 1.获取请求头中的token
         String token = request.getHeader("authorization");
         if (StrUtil.isBlank(token)) {
+            stringRedisTemplate.opsForHyperLogLog().add(UV_KEY, request.getRemoteAddr());
             return true;
         }
         // 2.基于TOKEN获取redis中的用户
@@ -34,12 +36,14 @@ public class RefreshTokenInterceptor implements HandlerInterceptor {
         Map<Object, Object> userMap = stringRedisTemplate.opsForHash().entries(key);
         // 3.判断用户是否存在
         if (userMap.isEmpty()) {
+            stringRedisTemplate.opsForHyperLogLog().add(UV_KEY, request.getRemoteAddr());
             return true;
         }
         // 5.将查询到的hash数据转为UserDTO
         UserDTO userDTO = BeanUtil.fillBeanWithMap(userMap, new UserDTO(), false);
         // 6.存在，保存用户信息到 ThreadLocal
         UserHolder.saveUser(userDTO);
+        stringRedisTemplate.opsForHyperLogLog().add(UV_KEY, String.valueOf(userDTO.getId()));
         // 7.刷新token有效期
         stringRedisTemplate.expire(key, LOGIN_USER_TTL, TimeUnit.MINUTES);
         // 8.放行

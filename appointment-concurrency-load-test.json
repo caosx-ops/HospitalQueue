@@ -1,0 +1,24 @@
+{
+  "note" : "Single-host local integration benchmark with temporary data; not a production capacity claim.",
+  "os" : "Windows 10 10.0",
+  "initial_stock" : 12,
+  "accepted" : 12,
+  "business_rejected" : 88,
+  "requests" : 100,
+  "target" : "POST /appointment/grab/{temporaryScheduleId}",
+  "concurrency" : 40,
+  "latency_ms" : {
+    "p99" : 628.246,
+    "max" : 628.303,
+    "mean" : 309.294,
+    "p50" : 131.33,
+    "p95" : 627.018
+  },
+  "elapsed_seconds" : 0.817,
+  "java" : "1.8.0_503",
+  "checks" : [ "accepted equals stock", "unique appointment IDs", "DB stock equals Redis stock", "all accepted rows persisted", "foreign appointment read denied" ],
+  "host" : "PC-20260907VIOM",
+  "throughput_requests_per_second" : 122.412,
+  "started_at" : "2026-10-04T12:24:08.332+08:00",
+  "http_errors" : 0
+}

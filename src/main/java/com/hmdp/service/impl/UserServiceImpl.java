@@ -59,7 +59,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         stringRedisTemplate.opsForValue().set(LOGIN_CODE_KEY + phone, code, LOGIN_CODE_TTL, TimeUnit.MINUTES);
 
         // 5.发送验证码
-        log.debug("发送短信验证码成功，验证码：{}", code);
+        log.debug("模拟验证码请求已创建，手机号后四位={}", phone.substring(phone.length() - 4));
         // 返回ok
         return Result.ok();
     }
@@ -79,6 +79,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             // 不一致，报错
             return Result.fail("验证码错误");
         }
+        stringRedisTemplate.delete(LOGIN_CODE_KEY + phone);
 
         // 4.一致，根据手机号查询用户 select * from tb_user where phone = ?
         User user = query().eq("phone", phone).one();
